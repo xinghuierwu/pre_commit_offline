@@ -70,14 +70,14 @@ def cli():
     )
     parser.add_argument('-p', '--python-package-path', dest='package_path', required=True)
     parser.add_argument('-g', '--Git-projects-path', dest='git_path', required=True)
-    parser.add_argument('-c', '--pre-commit-cache-zip-path', dest='cache_path', required=True)
+    parser.add_argument('-c', '--pre-commit-cache-zip-path', dest='', required=True)
     args = parser.parse_args()
     if not (args.package_path and args.git_path and args.cache_path):
         print("The required parameters are not complete")
         sys.exit(1)
-    package_path = args.p
-    git_path = args.g
-    cache_path = args.c
+    package_path = args.package_path
+    git_path = args.git_path
+    cache_path = args.cache_path
     if sys.version[:4] != '3.8':
         print("Python version error!")
         sys.exit(1)
