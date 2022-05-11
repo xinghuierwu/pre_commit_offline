@@ -18,14 +18,14 @@ def dir_exist(path):
     print("The path exists")
 
 
-def run_cmd(command, package_path):
+def run_cmd(command, envs):
     """Set environment Variables,Run the command and check the return code"""
     sub = subprocess.Popen(
         command,
         shell=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
-        env={"PIP_FIND_LINKS": package_path, "PIP_NO_INDEX": "1"},
+        env=envs,
     )
     ret = sub.wait()
     if ret != 0:
@@ -66,6 +66,7 @@ def cli():
     package_path = args.package_path
     git_path = args.git_path
     cache_path = args.cache_path
+    envs = {"PIP_FIND_LINKS": package_path, "PIP_NO_INDEX": "1"}
 
     if sys.version[:3] != "3.8":
         print("Python version error!")
@@ -78,15 +79,15 @@ def cli():
     dir_exist(cache_path)
 
     check_git_cmd = "git --version"
-    run_cmd(check_git_cmd, package_path)
+    run_cmd(check_git_cmd, envs)
 
     pip_install_cmd = f"{sys_path} -m pip install pre-commit"
 
-    run_cmd(pip_install_cmd, package_path)
+    run_cmd(pip_install_cmd, envs)
 
     install_cmd = f"{sys_path} -m pre_commit install"
 
-    run_cmd(install_cmd, package_path)
+    run_cmd(install_cmd, envs)
 
     dest_dir = f"{cache_dir}\\.cache"
     unzip_file(cache_path, dest_dir)  # zip_src = cache_path
@@ -116,7 +117,7 @@ def cli():
         print("Connect false!")
 
     hooks_cmd = f"{sys_path} -m pre_commit install-hooks"
-    run_cmd(hooks_cmd, package_path)
+    run_cmd(hooks_cmd, envs)
 
     print("Pre-commit has been installed offline successfully!")
 
