@@ -18,23 +18,7 @@ def dir_exist(path):
     print("The path exists")
 
 
-def IsGitEnv():
-    """Check whether Git is in the environment variables"""
-    p = subprocess.Popen(
-        "git --version",
-        shell=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-    )
-    ret = p.wait()
-    if ret != 0:
-        print("No Git in the environment variables!")
-        sys.exit(-1)
-    print("Git is in the environment variables.")
-    return
-
-
-def RunCmd(command, **kwargs):
+def Run_cmd(command, **kwargs):
     """Run the command and check the return code"""
     envirs = kwargs if kwargs else None
     sub = subprocess.Popen(
@@ -93,20 +77,21 @@ def cli():
 
     dir_exist(cache_path)
 
-    IsGitEnv()
+    Git_env_cmd = 'git --version'
+    Run_cmd(Git_env_cmd)
 
     env_cmd = f"{sys_path} -m pip install pre-commit"
-    RunCmd(env_cmd, PIP_FIND_LINKS=package_path, PIP_NO_INDEX="1")
+    Run_cmd(env_cmd, PIP_FIND_LINKS=package_path, PIP_NO_INDEX="1")
 
     install_cmd = f"{sys_path} -m pre_commit install"
 
-    RunCmd(install_cmd)
+    Run_cmd(install_cmd)
 
     dest_dir = f"{cache_dir}\\.cache"
     unzip_file(cache_path, dest_dir)  # zip_src = cache_path
 
     try:
-        db_file = "D:\\pre-commit\\db.db"
+        db_file = f"{dest_dir}\\pre-commit\\db.db"
         conn = sqlite3.connect(db_file)
         cur = conn.cursor()
 
@@ -130,7 +115,7 @@ def cli():
         print("Connect false!")
 
     hooks_cmd = f"{sys_path} -m pre_commit install-hooks"
-    RunCmd(hooks_cmd)
+    Run_cmd(hooks_cmd)
 
     print("Pre-commit has been installed offline successfully!")
 
