@@ -29,7 +29,7 @@ def run_cmd(command, envs):
     )
     ret = sub.wait()
     if ret != 0:
-        print('error cmd:',command)
+        print("error cmd:", command)
         print("The return code of the subprocess is not 0!")
         sys.exit(1)
     return
