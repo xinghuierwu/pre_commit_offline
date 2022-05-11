@@ -21,44 +21,34 @@ def dir_exist(path):
 def IsGitEnv():
     """Check whether Git is in the environment variables"""
     p = subprocess.Popen(
-        "where git",
+        "git --version",
         shell=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
     )
-    if "git" not in str(p.communicate()[0]):
+    ret = p.wait()
+    if ret != 0:
         print("No Git in the environment variables!")
         sys.exit(-1)
     print("Git is in the environment variables.")
     return
 
 
-def SetEnv(package_path):
-    """Set the environment variables and run the command to install package"""
-    command = f"{sys_path} -m pip install pre-commit"
+def RunCmd(command, **kwargs):
+    """Run the command and check the return code"""
+    envirs = kwargs if kwargs else None
     sub = subprocess.Popen(
         command,
         shell=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
-        env={"PIP_FIND_LINKS": package_path, "PIP_NO_INDEX": "1"},
+        env=envirs,
     )
     ret = sub.wait()
     if ret != 0:
         print("The return code of the subprocess is not 0!")
         sys.exit(1)
     return
-
-
-def RunCmd(command):
-    """Run the command and check the return code"""
-    sub = subprocess.Popen(
-        command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-    )
-    ret = sub.wait()
-    if ret != 0:
-        print("The return code of the subprocess is not 0!")
-        sys.exit(1)
 
 
 def unzip_file(zip_src, dst_dir):
@@ -79,7 +69,9 @@ def cli():
     parser.add_argument(
         "-p", "--python-package-path", dest="package_path", required=True
     )
-    parser.add_argument("-g", "--Git-projects-path", dest="git_path", required=True)
+    parser.add_argument(
+        "-g", "--Git-projects-path", dest="git_path", required=True
+    )
     parser.add_argument(
         "-c", "--pre-commit-cache-zip-path", dest="cache_path", required=True
     )
@@ -103,7 +95,8 @@ def cli():
 
     IsGitEnv()
 
-    SetEnv(package_path)
+    env_cmd = f"{sys_path} -m pip install pre-commit"
+    RunCmd(env_cmd, PIP_FIND_LINKS=package_path, PIP_NO_INDEX="1")
 
     install_cmd = f"{sys_path} -m pre_commit install"
 
