@@ -18,7 +18,7 @@ def dir_exist(path):
     print("The path exists")
 
 
-def run_cmd(command,package_path):
+def run_cmd(command, package_path):
     """Set environment Variables,Run the command and check the return code"""
     sub = subprocess.Popen(
         command,
@@ -29,6 +29,7 @@ def run_cmd(command,package_path):
     )
     ret = sub.wait()
     if ret != 0:
+        print('error cmd:',command)
         print("The return code of the subprocess is not 0!")
         sys.exit(1)
     return
@@ -76,16 +77,16 @@ def cli():
 
     dir_exist(cache_path)
 
-    check_git_cmd = 'git --version'
-    run_cmd(check_git_cmd,package_path)
+    check_git_cmd = "git --version"
+    run_cmd(check_git_cmd, package_path)
 
     pip_install_cmd = f"{sys_path} -m pip install pre-commit"
-    
-    run_cmd(pip_install_cmd,package_path)
+
+    run_cmd(pip_install_cmd, package_path)
 
     install_cmd = f"{sys_path} -m pre_commit install"
 
-    run_cmd(install_cmd,package_path)
+    run_cmd(install_cmd, package_path)
 
     dest_dir = f"{cache_dir}\\.cache"
     unzip_file(cache_path, dest_dir)  # zip_src = cache_path
@@ -115,7 +116,7 @@ def cli():
         print("Connect false!")
 
     hooks_cmd = f"{sys_path} -m pre_commit install-hooks"
-    run_cmd(hooks_cmd,package_path)
+    run_cmd(hooks_cmd, package_path)
 
     print("Pre-commit has been installed offline successfully!")
 
