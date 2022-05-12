@@ -39,6 +39,7 @@ def unzip_file(zip_src, dst_dir):
         fz = zipfile.ZipFile(zip_src, "r")
         for file in fz.namelist():
             fz.extract(file, dst_dir)
+        print("Unzip successfully.")
     else:
         print("This is not a zip file")
         sys.exit(-1)
@@ -61,13 +62,18 @@ def cli():
         print("The required parameters are not complete")
         sys.exit(1)
     package_path = args.package_path
+    print('package_path:',package_path)
     git_path = args.git_path
+    print('git_path:',git_path)
     cache_path = args.cache_path
+    print('cache_path:',cache_path)
     envs = {"PIP_FIND_LINKS": package_path, "PIP_NO_INDEX": "1"}
 
     if sys.version[:3] != "3.8":
         print("Python version error!")
         sys.exit(1)
+    else:
+        print('Python version right.')
 
     dir_exist(package_path)
 
@@ -80,18 +86,24 @@ def cli():
     if run_cmd(check_git_cmd, env=envs)[0] != 0:
         print("Environment variables do not contain Git!")
         sys.exit(1)
+    else:
+        print("Environment variables contain Git.")
 
     pip_install_cmd = f"{sys_path} -m pip install pre-commit"
 
     if run_cmd(pip_install_cmd, env=envs)[0] != 0:
         print("pip install failed!")
         sys.exit(1)
+    else:
+        print("pip install successfully.")
 
     install_cmd = f"{sys_path} -m pre_commit install"
 
     if run_cmd(install_cmd, env=envs)[0] != 0:
         print("pre_commit install failed!")
         sys.exit(1)
+    else:
+        print("pre-commit install successfully.")
 
     dest_dir = f"{cache_dir}\\.cache"
     unzip_file(cache_path, dest_dir)  # zip_src = cache_path
@@ -124,6 +136,8 @@ def cli():
     if run_cmd(hooks_cmd, env=envs)[0] != 0:
         print("pre_commit install-hooks failed!")
         sys.exit(1)
+    else:
+        print('pre-commit install-hooks successfully.')
 
     print("Pre-commit has been installed offline successfully!")
 
