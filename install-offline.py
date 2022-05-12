@@ -51,9 +51,7 @@ def cli():
     parser.add_argument(
         "-p", "--python-package-path", dest="package_path", required=True
     )
-    parser.add_argument(
-        "-g", "--Git-projects-path", dest="git_path", required=True
-    )
+    parser.add_argument("-g", "--Git-projects-path", dest="git_path", required=True)
     parser.add_argument(
         "-c", "--pre-commit-cache-zip-path", dest="cache_path", required=True
     )
@@ -62,18 +60,18 @@ def cli():
         print("The required parameters are not complete")
         sys.exit(1)
     package_path = args.package_path
-    print('package_path:',package_path)
+
     git_path = args.git_path
-    print('git_path:',git_path)
+
     cache_path = args.cache_path
-    print('cache_path:',cache_path)
+
     envs = {"PIP_FIND_LINKS": package_path, "PIP_NO_INDEX": "1"}
 
     if sys.version[:3] != "3.8":
         print("Python version error!")
         sys.exit(1)
     else:
-        print('Python version right.')
+        print("Python version right.")
 
     dir_exist(package_path)
 
@@ -137,7 +135,7 @@ def cli():
         print("pre_commit install-hooks failed!")
         sys.exit(1)
     else:
-        print('pre-commit install-hooks successfully.')
+        print("pre-commit install-hooks successfully.")
 
     print("Pre-commit has been installed offline successfully!")
 
