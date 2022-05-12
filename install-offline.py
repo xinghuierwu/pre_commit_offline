@@ -90,18 +90,18 @@ def cli():
     pip_install_cmd = f"{sys_path} -m pip install pre-commit"
 
     if run_cmd(pip_install_cmd, env=envs)[0] != 0:
-        print("pip install failed!")
+        print("Pip install failed!")
         sys.exit(1)
     else:
-        print("pip install successfully.")
+        print("Pip install successfully.")
 
     install_cmd = f"{sys_path} -m pre_commit install"
 
     if run_cmd(install_cmd, env=envs)[0] != 0:
-        print("pre_commit install failed!")
+        print("Pre_commit install failed!")
         sys.exit(1)
     else:
-        print("pre-commit install successfully.")
+        print("Pre-commit install successfully.")
 
     dest_dir = f"{cache_dir}\\.cache"
     unzip_file(cache_path, dest_dir)  # zip_src = cache_path
@@ -125,18 +125,17 @@ def cli():
         conn.commit()
         cur.close()
         conn.close()
-
+        print('The database entry value is modified successfully')
     except Error as e:
         print(e)
         print("Connect false!")
 
     hooks_cmd = f"{sys_path} -m pre_commit install-hooks"
     if run_cmd(hooks_cmd, env=envs)[0] != 0:
-        print("pre_commit install-hooks failed!")
+        print("Pre_commit install-hooks failed!")
         sys.exit(1)
     else:
-        print("pre-commit install-hooks successfully.")
-
+        print("Pre-commit install-hooks successfully.")
     print("Pre-commit has been installed offline successfully!")
 
 
