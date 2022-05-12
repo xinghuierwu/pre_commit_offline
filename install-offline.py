@@ -19,7 +19,7 @@ def dir_exist(path):
 
 
 def run_cmd(command, **kwargs):
-    """Set environment variables, run the command"""
+    """Set environment variables and run the command"""
     sub = subprocess.Popen(
         command,
         shell=True,
@@ -65,7 +65,6 @@ def cli():
 
     cache_path = args.cache_path
 
-    envs = {"PIP_FIND_LINKS": package_path, "PIP_NO_INDEX": "1"}
 
     if sys.version[:3] != "3.8":
         print("Python version error!")
@@ -81,16 +80,20 @@ def cli():
 
     check_git_cmd = "git --version"
 
-    if run_cmd(check_git_cmd, env=envs)[0] != 0:
+    if run_cmd(check_git_cmd, env=None)[0] != 0:
         print("Environment variables do not contain Git!")
+        print('error:', run_cmd(check_git_cmd, env=None)[1])
         sys.exit(1)
     else:
         print("Environment variables contain Git.")
+
+    envs = {**os.environ, "PIP_FIND_LINKS": package_path, "PIP_NO_INDEX": "1"}
 
     pip_install_cmd = f"{sys_path} -m pip install pre-commit"
 
     if run_cmd(pip_install_cmd, env=envs)[0] != 0:
         print("Pip install failed!")
+        print('error:', run_cmd(pip_install_cmd, env=envs)[1])
         sys.exit(1)
     else:
         print("Pip install successfully.")
@@ -125,17 +128,20 @@ def cli():
         conn.commit()
         cur.close()
         conn.close()
-        print('The database entry value is modified successfully')
+        print('The database entry values are modified successfully')
     except Error as e:
         print(e)
         print("Connect false!")
 
+    os.chdir(git_path)
     hooks_cmd = f"{sys_path} -m pre_commit install-hooks"
     if run_cmd(hooks_cmd, env=envs)[0] != 0:
         print("Pre_commit install-hooks failed!")
+        print('error:',run_cmd(hooks_cmd, env=envs)[1])
         sys.exit(1)
     else:
         print("Pre-commit install-hooks successfully.")
+
     print("Pre-commit has been installed offline successfully!")
 
 
