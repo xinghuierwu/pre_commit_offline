@@ -48,22 +48,29 @@ def unzip_file(zip_src, dst_dir):
 
 def cli():
     parser = argparse.ArgumentParser(description="Install pre-commit offline")
-    parser.add_argument(
-        "-p", "--python-package-path", dest="package_path", required=True
+    parser.add_argument("-p", "--pyformat-path", 
+                        dest="pyformat_path", 
+                        required=True, 
+                        help='The path to the pyformat folder'
     )
-    parser.add_argument("-g", "--Git-projects-path", dest="git_path", required=True)
-    parser.add_argument(
-        "-c", "--pre-commit-cache-zip-path", dest="cache_path", required=True
+    parser.add_argument("-g", "--Git-projects-path", 
+                        dest="git_path", 
+                        required=True, 
+                        help='The path to the folder of a Git project')
+    parser.add_argument("-z", "--pre-commit-cache-zip-path",
+                        dest="zip_path", 
+                        required=True, 
+                        help='The path to the pre-commit.zip'
     )
     args = parser.parse_args()
-    if not (args.package_path and args.git_path and args.cache_path):
+    if not (args.pyformat_path and args.git_path and args.zip_path):
         print("The required parameters are not complete")
         sys.exit(1)
-    package_path = args.package_path
+    pyformat_path = args.pyformat_path
 
     git_path = args.git_path
 
-    cache_path = args.cache_path
+    zip_path = args.zip_path
 
 
     if sys.version[:3] != "3.8":
@@ -72,11 +79,11 @@ def cli():
     else:
         print("Python version right.")
 
-    dir_exist(package_path)
+    dir_exist(pyformat_path)
 
     dir_exist(git_path)
 
-    dir_exist(cache_path)
+    dir_exist(zip_path)
 
     check_git_cmd = "git --version"
 
@@ -87,7 +94,7 @@ def cli():
     else:
         print("Environment variables contain Git.")
 
-    envs = {**os.environ, "PIP_FIND_LINKS": package_path, "PIP_NO_INDEX": "1"}
+    envs = {**os.environ, "PIP_FIND_LINKS": pyformat_path, "PIP_NO_INDEX": "1"}
 
     pip_install_cmd = f"{sys_path} -m pip install pre-commit"
 
@@ -107,7 +114,7 @@ def cli():
         print("Pre-commit install successfully.")
 
     dest_dir = f"{cache_dir}\\.cache"
-    unzip_file(cache_path, dest_dir)  # zip_src = cache_path
+    unzip_file(zip_path, dest_dir)  # zip_src = zip_path
 
     try:
         db_file = f"{dest_dir}\\pre-commit\\db.db"
